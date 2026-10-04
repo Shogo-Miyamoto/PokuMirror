@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ぽくミラー - iPhone の画面を PC に映して、マウスで操作</title>
+<link rel="icon" href="pokumirror-icon.png">
+<style>
+  body { font-family: "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif; line-height: 1.8; color: #222; background: #fafafa; margin: 0; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.6em; margin-bottom: 0.2em; }
+  h2 { font-size: 1.2em; border-left: 4px solid #2a7ae2; padding-left: 8px; margin-top: 2em; }
+  .lead { color: #555; }
+  .download { display: inline-block; background: #2a7ae2; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 12px 0; }
+  .note { background: #fff7e0; border: 1px solid #f0d58c; border-radius: 6px; padding: 8px 12px; }
+  code { background: #eee; padding: 1px 4px; border-radius: 3px; }
+  table { border-collapse: collapse; }
+  td { padding: 4px 12px 4px 0; vertical-align: top; }
+  small { color: #666; }
+</style>
+</head>
+<body>
+<main>
+  <h1><img src="pokumirror-icon.png" alt="" width="48" height="48" style="vertical-align:middle;margin-right:8px">ぽくミラー <small>for iPhone</small></h1>
+  <p class="lead">iPhone の画面を Windows PC に映して、PC のマウスで操作できるようにするツールです。iPhone 側にアプリは不要です。ESP32 ボードがなくても、画面ミラーリングだけのアプリとして使えます。</p>
+
+  <a class="download" href="PokuMirror-v1.1.zip">ダウンロード（v1.1 / Windows 用 zip・約 170MB）</a>
+
+  <h2>できること</h2>
+  <table>
+    <tr><td>マウスを動かす</td><td>iPhone のポインタが動く</td></tr>
+    <tr><td>左クリック</td><td>タップ</td></tr>
+    <tr><td>ドラッグ</td><td>スワイプ</td></tr>
+    <tr><td>ホイール</td><td>スクロール</td></tr>
+  </table>
+  <p>画面の縦／横の切り替えにも対応しています。</p>
+
+  <h2>必要なもの</h2>
+  <ul>
+    <li>Windows 10 / 11（64bit）の PC</li>
+    <li>iPhone（PC と同じ Wi-Fi につながっていること）</li>
+    <li><strong>ESP32 ボード</strong>（マウスで操作する場合のみ）（1,500 円前後。例: ESP32-DevKitC、Freenove ESP32）<br>
+      <small>※「ESP32-S2」は Bluetooth がないため使えません</small></li>
+    <li>ボードと PC をつなぐ USB ケーブル（データ通信対応のもの。マウスで操作する場合のみ）</li>
+  </ul>
+  <p class="note">PC のマウスの動きを、USB でつないだ ESP32 ボードが「Bluetooth マウス」として iPhone に伝える仕組みです。そのため ESP32 ボードが必要です。</p>
+
+  <h2>使い方</h2>
+  <ol>
+    <li>zip を展開し、ESP32 ボードを USB で PC につなぎます。</li>
+    <li><code>PokuMirror.exe</code> をダブルクリックします（初回はセットアップ画面が案内します）。</li>
+    <li>iPhone のコントロールセンターから「画面ミラーリング」→「UxPlay-（PC 名）」を選びます。</li>
+    <li>PC に映った iPhone の画面を左クリックすると操作開始、右クリックで終了です。</li>
+  </ol>
+
+  <h2>ライセンス</h2>
+  <p>GNU General Public License v3 で配布しています。ソースコードは zip 内の <code>source</code> フォルダに同梱しています。<br>
+  画面ミラーリング受信には <a href="https://github.com/FDH2/UxPlay">UxPlay</a>（GPLv3）を同梱しています。その他のライブラリのライセンスは「はじめにお読みください.txt」をご覧ください。</p>
+  <p><small>本ツールは無保証です。使用によって生じた損害について作者は責任を負いません。iPhone、AirPlay は Apple Inc. の商標です。</small></p>
+</main>
+</body>
+</html>

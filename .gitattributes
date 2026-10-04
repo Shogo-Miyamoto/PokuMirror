@@ -1,0 +1,4 @@
+# バッチファイルは Shift-JIS / CRLF のまま保存する (変換すると文字化けする)
+*.bat -text
+*.ico binary
+*.png binary
