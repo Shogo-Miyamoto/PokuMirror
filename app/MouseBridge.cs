@@ -48,6 +48,13 @@ sealed class MouseBridge : IDisposable
         return h != IntPtr.Zero && NativeMethods.GetClientRect(h, out var rc) && rc.Right > rc.Bottom;
     }
 
+    // ログ用: ミラー画面 (映像部分) の大きさ
+    string MirrorSize()
+    {
+        var h = _mirrorHwnd;
+        return h != IntPtr.Zero && NativeMethods.GetClientRect(h, out var rc) ? $"ミラー画面 {rc.Right}x{rc.Bottom}" : "ミラー画面なし";
+    }
+
     void WatchOrientation()
     {
         bool? previous = null;
@@ -64,7 +71,7 @@ sealed class MouseBridge : IDisposable
                 if (previous == now && _connectedLandscape != now && !_busy)
                 {
                     _busy = true;
-                    Log.Write($"画面が{(now ? "横" : "縦")}になったのでマウスをつなぎ直します");
+                    Log.Write($"画面が{(now ? "横" : "縦")}になったのでマウスをつなぎ直します ({MirrorSize()})");
                     _connectedLandscape = null;
                     if (!_link.ResetBoard()) _busy = false;  // つながると OnPhoneConnection で続きを行う
                 }
@@ -88,7 +95,10 @@ sealed class MouseBridge : IDisposable
                 if (_mirrorHwnd == IntPtr.Zero) { _connectedLandscape = null; return; }
                 var landscape = IsLandscape();
                 _connectedLandscape = landscape;
-                _rotation = landscape ? _settings.RotationLandscape : _settings.RotationPortrait;
+                // つなぎ直すと iPhone は今の画面に合わせた向きでポインタを動かすので、向きは 0° に戻す
+                // (中クリックで回した向きは、このつながりの間だけ使う)
+                _rotation = 0;
+                Log.Write($"マウスがつながりました ({(landscape ? "横" : "縦")}画面, {MirrorSize()})");
                 CenterPointer(landscape);
             }
             catch (Exception ex) { Log.Write($"エラー: {ex}"); }
@@ -234,9 +244,8 @@ sealed class MouseBridge : IDisposable
             }
             case NativeMethods.WM_MBUTTONDOWN:
             {
-                _rotation = (_rotation + 1) % 4;
-                if (IsLandscape()) _settings.RotationLandscape = _rotation; else _settings.RotationPortrait = _rotation;
-                _settings.Save();
+                _rotation = (_rotation + 1) % 4;  // 保存はしない (つなぎ直すと 0° に戻る)
+                Log.Write($"中クリックでポインタの向きを {_rotation * 90} 度にしました");
                 ShowUpDirection();
                 Post(() => Notice?.Invoke("ポインタの動く向きを 90 度回しました。ポインタが上へ動けば合っています。"));
                 break;

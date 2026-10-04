@@ -8,8 +8,8 @@ sealed class Settings
     public bool SetupDone;
     public bool MouseEnabled = true;  // false: ESP32 なしで、ミラーリングだけ使う
     public double Sensitivity = 1.5;
-    public int RotationPortrait;   // 中クリックで合わせたポインタの向き (縦画面)
-    public int RotationLandscape;  // 同 (横画面)
+    // 以前の版が保存したポインタの向き (RotationPortrait / RotationLandscape) は読まずに捨てる。
+    // 向きはつなぎ直すたびに 0° に戻すので、保存した値が残っていると逆向きに動いてしまう。
 
     static string FilePath => Path.Combine(Log.Dir, "settings.txt");
 
@@ -27,14 +27,11 @@ sealed class Settings
                     case "SetupDone": s.SetupDone = kv[1].Trim() == "1"; break;
                     case "MouseEnabled": s.MouseEnabled = kv[1].Trim() != "0"; break;
                     case "Sensitivity": double.TryParse(kv[1], NumberStyles.Float, CultureInfo.InvariantCulture, out s.Sensitivity); break;
-                    case "RotationPortrait": int.TryParse(kv[1], out s.RotationPortrait); break;
-                    case "RotationLandscape": int.TryParse(kv[1], out s.RotationLandscape); break;
                 }
             }
         }
         catch { }
         if (s.Sensitivity <= 0) s.Sensitivity = 1.5;
-        s.RotationPortrait &= 3; s.RotationLandscape &= 3;
         return s;
     }
 
@@ -48,8 +45,6 @@ sealed class Settings
                 $"SetupDone={(SetupDone ? 1 : 0)}",
                 $"MouseEnabled={(MouseEnabled ? 1 : 0)}",
                 $"Sensitivity={Sensitivity.ToString(CultureInfo.InvariantCulture)}",
-                $"RotationPortrait={RotationPortrait}",
-                $"RotationLandscape={RotationLandscape}",
             });
         }
         catch (Exception ex) { Log.Write($"設定を保存できません: {ex.Message}"); }

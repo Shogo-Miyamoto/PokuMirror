@@ -112,13 +112,14 @@ sealed class Esp32Link : IDisposable
             catch (TimeoutException) { continue; }
             catch (Exception) { Thread.Sleep(200); continue; }
             if (line.Length == 0) continue;
+            // 2 秒ごとの "ok" 以外 (ready / event ...) は、つなぎ直しの様子を後から追えるよう記録する
+            if (!line.StartsWith("ok")) Log.Write($"ESP32: {line}");
 
             if (line.StartsWith("ok") || line == "ready") FirmwareResponding = true;
             if (line.StartsWith("ok")) SetPhone(line.Contains("connected"));
             else if (line.StartsWith("event connected")) SetPhone(true);
             else if (line.StartsWith("event disconnected")) SetPhone(false);
             else if (line.StartsWith("event interval")) _reconnected.Set();
-            else if (line.StartsWith("err")) Log.Write($"ESP32: {line}");
         }
     }
 
